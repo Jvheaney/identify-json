@@ -1,5 +1,6 @@
 import json
 import sys
+import ast
 
 if len(sys.argv) != 2:
     print("You must specify a file to parse.")
@@ -71,8 +72,19 @@ def identify(key, struct):
 
 
 with open(FILE, 'r') as handle:
-    json_struct = json.load(handle)
+
+    json_struct = ""
     identity = {}
+    json_string_unparsed = handle.read()
+
+    try:
+        json_struct = json.load(json_string_unparsed)
+    except:
+        json_struct = ast.literal_eval(json_string_unparsed)
+
+    if len(json_struct) == 0:
+        print("The JSON struct has a length of zero.")
+        exit()
 
     for key in json_struct.keys():
         identity[key] = identify(key, json_struct)
